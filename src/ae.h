@@ -188,8 +188,16 @@ typedef struct aeEventLoop {
 
 } aeEventLoop;
 
-/* Prototypes */
+
+/**
+ *  初始化事件处理器
+ *
+ *  @param setsize：最大处理事件数（事件槽的数量）
+ *  @return 成功： eventloop
+ *          失败： NULL
+ */
 aeEventLoop *aeCreateEventLoop(int setsize);
+
 void aeDeleteEventLoop(aeEventLoop *eventLoop);
 void aeStop(aeEventLoop *eventLoop);
 int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask,

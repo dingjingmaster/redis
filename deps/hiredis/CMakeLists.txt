@@ -1,0 +1,3 @@
+SET(HIREDIS_SRC
+
+)
