@@ -40,8 +40,7 @@
 
 extern char **environ;
 
-// sentinel 的默认端口号
-#define REDIS_SENTINEL_PORT 26379
+#define REDIS_SENTINEL_PORT 26379           // 哨兵(sentinel) 默认端口
 
 /* ======================== Sentinel global state =========================== */
 

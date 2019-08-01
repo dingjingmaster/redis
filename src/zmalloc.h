@@ -69,6 +69,9 @@ void *zmalloc(size_t size);
 void *zcalloc(size_t size);
 void *zrealloc(void *ptr, size_t size);
 void zfree(void *ptr);
+/**
+ * 复制字符串，会malloc内存
+ */
 char *zstrdup(const char *s);
 size_t zmalloc_used_memory(void);
 void zmalloc_enable_thread_safeness(void);

@@ -68,13 +68,13 @@
 
 /* Static server configuration */
 /* 默认的服务器配置值 */
-#define REDIS_DEFAULT_HZ        10      /* Time interrupt calls/sec. */
+#define REDIS_DEFAULT_HZ        10                      // 默认服务器频率(sec) /* Time interrupt calls/sec. */
 #define REDIS_MIN_HZ            1
 #define REDIS_MAX_HZ            500 
-#define REDIS_SERVERPORT        6379    /* TCP port */
+#define REDIS_SERVERPORT        6379                    // 服务器默认端口
 #define REDIS_TCP_BACKLOG       511     /* TCP listen backlog */
-#define REDIS_MAXIDLETIME       0       /* default client timeout: infinite */
-#define REDIS_DEFAULT_DBNUM     16
+#define REDIS_MAXIDLETIME       0                       // 客户端超时时间，默认不超时
+#define REDIS_DEFAULT_DBNUM     16                      // redis 默认数据库数量
 #define REDIS_CONFIGLINE_MAX    1024
 #define REDIS_DBCRON_DBS_PER_CALL 16
 #define REDIS_MAX_WRITE_PER_EVENT (1024*64)
@@ -83,46 +83,46 @@
 #define REDIS_SHARED_BULKHDR_LEN 32
 #define REDIS_MAX_LOGMSG_LEN    1024 /* Default maximum length of syslog messages */
 #define REDIS_AOF_REWRITE_PERC  100
-#define REDIS_AOF_REWRITE_MIN_SIZE (64*1024*1024)
+#define REDIS_AOF_REWRITE_MIN_SIZE (64*1024*1024)       // AOF rewrite 最小64MB
 #define REDIS_AOF_REWRITE_ITEMS_PER_CMD 64
 #define REDIS_SLOWLOG_LOG_SLOWER_THAN 10000
-#define REDIS_SLOWLOG_MAX_LEN 128
-#define REDIS_MAX_CLIENTS 10000
-#define REDIS_AUTHPASS_MAX_LEN 512
+#define REDIS_SLOWLOG_MAX_LEN 128                       // 满日志最大长度
+#define REDIS_MAX_CLIENTS 10000                         // 最大连接客户端数
+#define REDIS_AUTHPASS_MAX_LEN 512                      // 密码最大长度
 #define REDIS_DEFAULT_SLAVE_PRIORITY 100
 #define REDIS_REPL_TIMEOUT 60
 #define REDIS_REPL_PING_SLAVE_PERIOD 10
-#define REDIS_RUN_ID_SIZE 40
+#define REDIS_RUN_ID_SIZE 40                            // 运行 ID 长度（随机字符串）
 #define REDIS_OPS_SEC_SAMPLES 16
 #define REDIS_DEFAULT_REPL_BACKLOG_SIZE (1024*1024)    /* 1mb */
 #define REDIS_DEFAULT_REPL_BACKLOG_TIME_LIMIT (60*60)  /* 1 hour */
 #define REDIS_REPL_BACKLOG_MIN_SIZE (1024*16)          /* 16k */
 #define REDIS_BGSAVE_RETRY_DELAY 5 /* Wait a few secs before trying again. */
-#define REDIS_DEFAULT_PID_FILE "/var/run/redis.pid"
-#define REDIS_DEFAULT_SYSLOG_IDENT "redis"
-#define REDIS_DEFAULT_CLUSTER_CONFIG_FILE "nodes.conf"
-#define REDIS_DEFAULT_DAEMONIZE 0
+#define REDIS_DEFAULT_PID_FILE "/var/run/redis.pid"     // 默认 pid 存储路径
+#define REDIS_DEFAULT_SYSLOG_IDENT "redis"              // 系统日志标识
+#define REDIS_DEFAULT_CLUSTER_CONFIG_FILE "nodes.conf"  // 集群节点配置文件
+#define REDIS_DEFAULT_DAEMONIZE 0                       // 默认redis服务是否后台运行
 #define REDIS_DEFAULT_UNIX_SOCKET_PERM 0
 #define REDIS_DEFAULT_TCP_KEEPALIVE 0
-#define REDIS_DEFAULT_LOGFILE ""
+#define REDIS_DEFAULT_LOGFILE ""                        // 默认日志文件名
 #define REDIS_DEFAULT_SYSLOG_ENABLED 0
 #define REDIS_DEFAULT_STOP_WRITES_ON_BGSAVE_ERROR 1
-#define REDIS_DEFAULT_RDB_COMPRESSION 1
+#define REDIS_DEFAULT_RDB_COMPRESSION 1                 // rdb 压缩
 #define REDIS_DEFAULT_RDB_CHECKSUM 1
-#define REDIS_DEFAULT_RDB_FILENAME "dump.rdb"
+#define REDIS_DEFAULT_RDB_FILENAME "dump.rdb"           // 默认数据库备份文件名
 #define REDIS_DEFAULT_SLAVE_SERVE_STALE_DATA 1
 #define REDIS_DEFAULT_SLAVE_READ_ONLY 1
 #define REDIS_DEFAULT_REPL_DISABLE_TCP_NODELAY 0
-#define REDIS_DEFAULT_MAXMEMORY 0
+#define REDIS_DEFAULT_MAXMEMORY 0                       // redis 默认最大内存
 #define REDIS_DEFAULT_MAXMEMORY_SAMPLES 5
-#define REDIS_DEFAULT_AOF_FILENAME "appendonly.aof"
+#define REDIS_DEFAULT_AOF_FILENAME "appendonly.aof"     // 数据库 aof 类型备份文件名
 #define REDIS_DEFAULT_AOF_NO_FSYNC_ON_REWRITE 0
 #define REDIS_DEFAULT_ACTIVE_REHASHING 1
 #define REDIS_DEFAULT_AOF_REWRITE_INCREMENTAL_FSYNC 1
 #define REDIS_DEFAULT_MIN_SLAVES_TO_WRITE 0
 #define REDIS_DEFAULT_MIN_SLAVES_MAX_LAG 10
 #define REDIS_IP_STR_LEN INET6_ADDRSTRLEN
-#define REDIS_PEER_ID_LEN (REDIS_IP_STR_LEN+32) /* Must be enough for ip:port */
+#define REDIS_PEER_ID_LEN (REDIS_IP_STR_LEN+32)         // redis id 长度，至少是 ip:port 的长度
 #define REDIS_BINDADDR_MAX 16
 #define REDIS_MIN_RESERVED_FDS 32
 
@@ -133,15 +133,16 @@
 #define ACTIVE_EXPIRE_CYCLE_FAST 1
 
 /* Protocol and I/O related defines */
-#define REDIS_MAX_QUERYBUF_LEN  (1024*1024*1024) /* 1GB max query buffer. */
-#define REDIS_IOBUF_LEN         (1024*16)  /* Generic I/O buffer size */
-#define REDIS_REPLY_CHUNK_BYTES (16*1024) /* 16k output buffer */
-#define REDIS_INLINE_MAX_SIZE   (1024*64) /* Max size of inline reads */
+#define REDIS_MAX_QUERYBUF_LEN  (1024*1024*1024)        // 最大query缓存：1GB
+#define REDIS_IOBUF_LEN         (1024*16)               // 普通 I/O buffer 大小：16KB
+#define REDIS_REPLY_CHUNK_BYTES (16*1024)               // 输出缓存大小：16KB
+#define REDIS_INLINE_MAX_SIZE   (1024*64)               // 每行读取缓存：64KB
 #define REDIS_MBULK_BIG_ARG     (1024*32)
 #define REDIS_LONGSTR_SIZE      21          /* Bytes needed for long -> str */
-// 指示 AOF 程序每累积这个量的写入数据
-// 就执行一次显式的 fsync
-#define REDIS_AOF_AUTOSYNC_BYTES (1024*1024*32) /* fdatasync every 32MB */
+
+
+#define REDIS_AOF_AUTOSYNC_BYTES (1024*1024*32)         // AOF 程序没积累这个量（32MB）就执行一次 fsync
+
 /* When configuring the Redis eventloop, we setup it so that the total number
  * of file descriptors we can handle are server.maxclients + RESERVED_FDS + FDSET_INCR
  * that is our safety margin. */
@@ -167,13 +168,12 @@
 #define REDIS_CMD_SKIP_MONITOR 2048         /* "M" flag */
 #define REDIS_CMD_ASKING 4096               /* "k" flag */
 
-/* Object types */
 // 对象类型
-#define REDIS_STRING 0
-#define REDIS_LIST 1
-#define REDIS_SET 2
-#define REDIS_ZSET 3
-#define REDIS_HASH 4
+#define REDIS_STRING 0                                  // 字符串类型
+#define REDIS_LIST 1                                    // 链表类型
+#define REDIS_SET 2                                     // 集合类型
+#define REDIS_ZSET 3                                    // zset 类型（带排行）
+#define REDIS_HASH 4                                    // hash 类型
 
 /* Objects encoding. Some kind of objects like Strings and Hashes can be
  * internally represented in multiple ways. The 'encoding' field of the object
@@ -216,12 +216,12 @@
 #define REDIS_RDB_ENC_INT32 2       /* 32 bit signed integer */
 #define REDIS_RDB_ENC_LZF 3         /* string compressed with FASTLZ */
 
-/* AOF states */
-#define REDIS_AOF_OFF 0             /* AOF is off */
-#define REDIS_AOF_ON 1              /* AOF is on */
-#define REDIS_AOF_WAIT_REWRITE 2    /* AOF waits rewrite to start appending */
+/* AOF 状态 */
+#define REDIS_AOF_OFF 0             // AOF 关闭
+#define REDIS_AOF_ON 1              // AOF 开启
+#define REDIS_AOF_WAIT_REWRITE 2    // AOF 等待追加写入
 
-/* Client flags */
+/* Client 标记 */
 #define REDIS_SLAVE (1<<0)   /* This client is a slave server */
 #define REDIS_MASTER (1<<1)  /* This client is a master server */
 #define REDIS_MONITOR (1<<2) /* This client is a slave monitor, see MONITOR */
@@ -289,7 +289,7 @@
 #define REDIS_SORT_DESC 2
 #define REDIS_SORTKEY_MAX 1024
 
-/* Log levels */
+/* Log 级别 */
 #define REDIS_DEBUG 0
 #define REDIS_VERBOSE 1
 #define REDIS_NOTICE 2
@@ -307,7 +307,7 @@
 #define AOF_FSYNC_NO 0
 #define AOF_FSYNC_ALWAYS 1
 #define AOF_FSYNC_EVERYSEC 2
-#define REDIS_DEFAULT_AOF_FSYNC AOF_FSYNC_EVERYSEC
+#define REDIS_DEFAULT_AOF_FSYNC AOF_FSYNC_EVERYSEC          // AOF 默认文件同步
 
 /* Zip structure related defaults */
 #define REDIS_HASH_MAX_ZIPLIST_ENTRIES 512
@@ -327,13 +327,14 @@
 #define REDIS_OP_INTER 2
 
 /* Redis maxmemory strategies */
+/* redis 内存管理策略 */
 #define REDIS_MAXMEMORY_VOLATILE_LRU 0
 #define REDIS_MAXMEMORY_VOLATILE_TTL 1
 #define REDIS_MAXMEMORY_VOLATILE_RANDOM 2
 #define REDIS_MAXMEMORY_ALLKEYS_LRU 3
 #define REDIS_MAXMEMORY_ALLKEYS_RANDOM 4
 #define REDIS_MAXMEMORY_NO_EVICTION 5
-#define REDIS_DEFAULT_MAXMEMORY_POLICY REDIS_MAXMEMORY_NO_EVICTION
+#define REDIS_DEFAULT_MAXMEMORY_POLICY REDIS_MAXMEMORY_NO_EVICTION      // 默认最大内存使用，不做回收管理
 
 /* Scripting */
 #define REDIS_LUA_TIME_LIMIT 5000 /* milliseconds */
@@ -839,7 +840,7 @@ struct redisServer {
     redisDb *db;
 
     // 命令表（受到 rename 配置选项的作用）
-    dict *commands;             /* Command table */
+    dict *commands;             // 命令表
     // 命令表（无 rename 配置选项的作用）
     dict *orig_commands;        /* Command table before command renaming. */
 
@@ -862,7 +863,7 @@ struct redisServer {
     char *pidfile;              /* PID file path */
 
     // 架构类型
-    int arch_bits;              /* 32 or 64 depending on sizeof(long) */
+    int arch_bits;                      // 判定x64或x32系统：sizeof(long) == 8) ? 64 : 32
 
     // serverCron() 函数的运行次数计数器
     int cronloops;              /* Number of times the cron function run */

@@ -363,6 +363,12 @@ int d2string(char *buf, size_t len, double value) {
  * given execution of Redis, so that if you are talking with an instance
  * having run_id == A, and you reconnect and it has run_id == B, you can be
  * sure that it is either a different instance or it was restarted. */
+/**
+ * 随机产生十六进制串
+ *
+ * 如果有： /dev/urandom：使用它做随机种子，产生的随机数更好一些
+ * 如果没有 /dev/urandom: 直接使用随机函数 rand() 从 0123456789abcdef 中产生字符，拼接成串
+ */
 void getRandomHexChars(char *p, unsigned int len) {
     FILE *fp = fopen("/dev/urandom","r");
     char *charset = "0123456789abcdef";

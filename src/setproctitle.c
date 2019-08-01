@@ -146,7 +146,7 @@ static int spt_copyargs(int argc, char *argv[]) {
 
 
 void spt_init(int argc, char *argv[]) {
-        char **envp = environ;
+    char **envp = environ;
 	char *base, *end, *nul, *tmp;
 	int i, error;
 
@@ -156,6 +156,7 @@ void spt_init(int argc, char *argv[]) {
 	nul = &base[strlen(base)];
 	end = nul + 1;
 
+	// ???
 	for (i = 0; i < argc || (i >= argc && argv[i]); i++) {
 		if (!argv[i] || argv[i] < end)
 			continue;

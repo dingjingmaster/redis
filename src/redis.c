@@ -3938,25 +3938,22 @@ int main(int argc, char **argv) {
 #ifdef INIT_SETPROCTITLE_REPLACEMENT
     spt_init(argc, argv);
 #endif
-    setlocale(LC_COLLATE,"");
+    setlocale(LC_COLLATE,"");                                   // 设置位置，跟时间有关
     zmalloc_enable_thread_safeness();
-    zmalloc_set_oom_handler(redisOutOfMemoryHandler);
-    srand(time(NULL)^getpid());
-    gettimeofday(&tv,NULL);
-    dictSetHashFunctionSeed(tv.tv_sec^tv.tv_usec^getpid());
+    zmalloc_set_oom_handler(redisOutOfMemoryHandler);           // 内存溢出的处理函数
+    srand(time(NULL)^getpid());                                 // 随机数发生器的种子：时间戳^pid
+    gettimeofday(&tv,NULL);                                     // 获取当前精准时间
+    dictSetHashFunctionSeed(tv.tv_sec^tv.tv_usec^getpid());     // hash 函数种子：时间(秒)^时间(微秒)^pid
 
-    // 检查服务器是否以 Sentinel 模式启动
-    server.sentinel_mode = checkForSentinelMode(argc,argv);
-
-    // 初始化服务器
-    initServerConfig();
+    server.sentinel_mode = checkForSentinelMode(argc,argv);     // 服务器是否以 sentinel 运行（是1；否0）
+    initServerConfig();                                         // 初始化服务配置
 
     /* We need to init sentinel right now as parsing the configuration file
      * in sentinel mode will have the effect of populating the sentinel
      * data structures with master nodes to monitor. */
     // 如果服务器以 Sentinel 模式启动，那么进行 Sentinel 功能相关的初始化
     // 并为要监视的主服务器创建一些相应的数据结构
-    if (server.sentinel_mode) {
+    if (server.sentinel_mode) {                                 // 如果redis一哨兵(sentinel)模式启动
         initSentinelConfig();
         initSentinel();
     }
@@ -4024,7 +4021,7 @@ int main(int argc, char **argv) {
     }
 
     // 将服务器设置为守护进程
-    if (server.daemonize) daemonize();
+    if (server.daemonize) daemonize();          // 服务器设为守护进程，关闭文件描述符、新建sessionid，摆脱控制台
 
     // 创建并初始化服务器数据结构
     initServer();
@@ -4035,8 +4032,7 @@ int main(int argc, char **argv) {
     // 为服务器进程设置名字
     redisSetProcTitle(argv[0]);
 
-    // 打印 ASCII LOGO
-    redisAsciiArt();
+    redisAsciiArt();                            // 打印 ASCII LOGO
 
     // 如果服务器不是运行在 SENTINEL 模式，那么执行以下代码
     if (!server.sentinel_mode) {
@@ -4078,8 +4074,7 @@ int main(int argc, char **argv) {
     aeSetBeforeSleepProc(server.el,beforeSleep);
     aeMain(server.el);
 
-    // 服务器关闭，停止事件循环
-    aeDeleteEventLoop(server.el);
+    aeDeleteEventLoop(server.el);                       // redis 关闭时执行的，停止事件循环
 
     return 0;
 }
