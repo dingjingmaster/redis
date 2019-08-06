@@ -7,7 +7,7 @@
 #### 进度
 
 - 双端链表 `adlist.c adlist.h` ok
-- 事件 `ae.c ae.h`
+- 事件 `ae.c ae.h` ok
 
 #### 代码整理
 
