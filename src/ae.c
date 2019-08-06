@@ -60,41 +60,26 @@
     #endif
 #endif
 
-/*
- * 初始化事件处理器状态
- */
+/* 初始化事件处理器状态 */
 aeEventLoop *aeCreateEventLoop(int setsize) {
     aeEventLoop *eventLoop;
     int i;
 
-    // 创建事件状态结构
-    if ((eventLoop = zmalloc(sizeof(*eventLoop))) == NULL) goto err;
-
-    // 初始化文件事件结构和已就绪文件事件结构数组
+    if ((eventLoop = zmalloc(sizeof(*eventLoop))) == NULL) goto err;            // 创建事件状态结构
     eventLoop->events = zmalloc(sizeof(aeFileEvent)*setsize);
     eventLoop->fired = zmalloc(sizeof(aeFiredEvent)*setsize);
     if (eventLoop->events == NULL || eventLoop->fired == NULL) goto err;
-    // 设置数组大小
-    eventLoop->setsize = setsize;
-    // 初始化执行最近一次执行时间
-    eventLoop->lastTime = time(NULL);
-
-    // 初始化时间事件结构
-    eventLoop->timeEventHead = NULL;
+    eventLoop->setsize = setsize;                                               // 设置数组大小
+    eventLoop->lastTime = time(NULL);                                           // 初始化执行最近一次执行时间
+    eventLoop->timeEventHead = NULL;                                            // 初始化时间事件结构
     eventLoop->timeEventNextId = 0;
-
-    eventLoop->stop = 0;
+    eventLoop->stop = 0;                                                        // 是否停止事件处理（不停止0；停止1）
     eventLoop->maxfd = -1;
     eventLoop->beforesleep = NULL;
-    if (aeApiCreate(eventLoop) == -1) goto err;
-
-    /* Events with mask == AE_NONE are not set. So let's initialize the
-     * vector with it. */
-    // 初始化监听事件
-    for (i = 0; i < setsize; i++)
+    if (aeApiCreate(eventLoop) == -1) goto err;                                 // epoll 句柄 ？？？
+    for (i = 0; i < setsize; i++)                                               // 初始化监听事件 mask == AE_NONE 表示事件未设置
         eventLoop->events[i].mask = AE_NONE;
 
-    // 返回事件循环
     return eventLoop;
 
 err:
@@ -146,9 +131,7 @@ int aeResizeSetSize(aeEventLoop *eventLoop, int setsize) {
     return AE_OK;
 }
 
-/*
- * 删除事件处理器
- */
+/* 删除事件处理器 */
 void aeDeleteEventLoop(aeEventLoop *eventLoop) {
     aeApiFree(eventLoop);
     zfree(eventLoop->events);
@@ -156,80 +139,49 @@ void aeDeleteEventLoop(aeEventLoop *eventLoop) {
     zfree(eventLoop);
 }
 
-/*
- * 停止事件处理器
- */
+/* 停止事件处理器 */
 void aeStop(aeEventLoop *eventLoop) {
     eventLoop->stop = 1;
 }
 
-/*
- * 根据 mask 参数的值，监听 fd 文件的状态，
- * 当 fd 可用时，执行 proc 函数
- */
-int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask,
-        aeFileProc *proc, void *clientData)
-{
+/* 根据 mask 参数的值，监听 fd 文件的状态，当 fd 可用时，执行 proc 函数 */
+int aeCreateFileEvent(aeEventLoop *eventLoop, int fd, int mask, aeFileProc *proc, void *clientData) {
     if (fd >= eventLoop->setsize) {
         errno = ERANGE;
         return AE_ERR;
     }
 
-    if (fd >= eventLoop->setsize) return AE_ERR;
-
-    // 取出文件事件结构
-    aeFileEvent *fe = &eventLoop->events[fd];
-
-    // 监听指定 fd 的指定事件
-    if (aeApiAddEvent(eventLoop, fd, mask) == -1)
+    aeFileEvent *fe = &eventLoop->events[fd];               // 取出文件事件结构
+    if (aeApiAddEvent(eventLoop, fd, mask) == -1)           // 监听指定 fd 的指定事件
         return AE_ERR;
 
-    // 设置文件事件类型，以及事件的处理器
-    fe->mask |= mask;
-    if (mask & AE_READABLE) fe->rfileProc = proc;
-    if (mask & AE_WRITABLE) fe->wfileProc = proc;
-
-    // 私有数据
-    fe->clientData = clientData;
-
-    // 如果有需要，更新事件处理器的最大 fd
-    if (fd > eventLoop->maxfd)
+    fe->mask |= mask;                                       // 设置文件事件类型，以及事件的处理器
+    if (mask & AE_READABLE) fe->rfileProc = proc;           // 如果监听读，则设置proc
+    if (mask & AE_WRITABLE) fe->wfileProc = proc;           // 如果监听写，则设置proc
+    fe->clientData = clientData;                            // 私有数据
+    if (fd > eventLoop->maxfd)                              // 如果有需要，更新事件处理器的最大 fd
         eventLoop->maxfd = fd;
 
     return AE_OK;
 }
 
-/*
- * 将 fd 从 mask 指定的监听队列中删除
- */
-void aeDeleteFileEvent(aeEventLoop *eventLoop, int fd, int mask)
-{
+/* 将 fd 从 mask 指定的监听队列中删除 */
+void aeDeleteFileEvent(aeEventLoop *eventLoop, int fd, int mask) {
     if (fd >= eventLoop->setsize) return;
-
-    // 取出文件事件结构
-    aeFileEvent *fe = &eventLoop->events[fd];
-
-    // 未设置监听的事件类型，直接返回
-    if (fe->mask == AE_NONE) return;
-
-    // 计算新掩码
-    fe->mask = fe->mask & (~mask);
-    if (fd == eventLoop->maxfd && fe->mask == AE_NONE) {
-        /* Update the max fd */
+    aeFileEvent *fe = &eventLoop->events[fd];               // 取出文件事件结构
+    if (fe->mask == AE_NONE) return;                        // 未设置监听的事件类型，直接返回
+    fe->mask = fe->mask & (~mask);                          // 计算新掩码（删除 fd 具体事件mask）
+    if (fd == eventLoop->maxfd && fe->mask == AE_NONE) {    // 删除后更新最大的 maxfd
         int j;
-
         for (j = eventLoop->maxfd-1; j >= 0; j--)
             if (eventLoop->events[j].mask != AE_NONE) break;
         eventLoop->maxfd = j;
     }
 
-    // 取消对给定 fd 的给定事件的监视
-    aeApiDelEvent(eventLoop, fd, mask);
+    aeApiDelEvent(eventLoop, fd, mask);                     // 取消对给定 fd 的给定事件的监视
 }
 
-/*
- * 获取给定 fd 正在监听的事件类型
- */
+/* 获取给定 fd 正在监听的事件类型 */
 int aeGetFileEvents(aeEventLoop *eventLoop, int fd) {
     if (fd >= eventLoop->setsize) return 0;
     aeFileEvent *fe = &eventLoop->events[fd];
@@ -237,75 +189,42 @@ int aeGetFileEvents(aeEventLoop *eventLoop, int fd) {
     return fe->mask;
 }
 
-/*
- * 取出当前时间的秒和毫秒，
- * 并分别将它们保存到 seconds 和 milliseconds 参数中
- */
-static void aeGetTime(long *seconds, long *milliseconds)
-{
+/* 取出当前时间的秒和毫秒，并分别将它们保存到 seconds 和 milliseconds 参数中 */
+static void aeGetTime(long *seconds, long *milliseconds) {
     struct timeval tv;
-
     gettimeofday(&tv, NULL);
     *seconds = tv.tv_sec;
     *milliseconds = tv.tv_usec/1000;
 }
 
-/*
- * 在当前时间上加上 milliseconds 毫秒，
- * 并且将加上之后的秒数和毫秒数分别保存在 sec 和 ms 指针中。
- */
+/* 在当前时间上加上 milliseconds 毫秒，加上之后保存在 sec 和 ms 指针中。 */
 static void aeAddMillisecondsToNow(long long milliseconds, long *sec, long *ms) {
     long cur_sec, cur_ms, when_sec, when_ms;
+    aeGetTime(&cur_sec, &cur_ms);                           // 获取当前时间
 
-    // 获取当前时间
-    aeGetTime(&cur_sec, &cur_ms);
-
-    // 计算增加 milliseconds 之后的秒数和毫秒数
-    when_sec = cur_sec + milliseconds/1000;
-    when_ms = cur_ms + milliseconds%1000;
-
-    // 进位：
-    // 如果 when_ms 大于等于 1000
-    // 那么将 when_sec 增大一秒
-    if (when_ms >= 1000) {
+    when_sec = cur_sec + milliseconds/1000;                 // 计算增加 milliseconds 之后的秒数
+    when_ms = cur_ms + milliseconds%1000;                   // 计算增加 milliseconds 之后的秒数后的毫秒数
+    if (when_ms >= 1000) {                                  // 进位： 如果 when_ms 大于等于 1000 那么将 when_sec 增大一秒
         when_sec ++;
         when_ms -= 1000;
     }
-
-    // 保存到指针中
     *sec = when_sec;
     *ms = when_ms;
 }
 
-/*
- * 创建时间事件
- */
-long long aeCreateTimeEvent(aeEventLoop *eventLoop, long long milliseconds,
-        aeTimeProc *proc, void *clientData,
-        aeEventFinalizerProc *finalizerProc)
-{
-    // 更新时间计数器
-    long long id = eventLoop->timeEventNextId++;
-
-    // 创建时间事件结构
-    aeTimeEvent *te;
-
+/* 创建时间事件 */
+long long aeCreateTimeEvent(aeEventLoop *eventLoop, long long milliseconds, aeTimeProc *proc, void *clientData,
+        aeEventFinalizerProc *finalizerProc) {
+    long long id = eventLoop->timeEventNextId++;                        // 更新时间计数器
+    aeTimeEvent *te;                                                    // 创建时间事件结构
     te = zmalloc(sizeof(*te));
     if (te == NULL) return AE_ERR;
-
-    // 设置 ID
-    te->id = id;
-
-    // 设定处理事件的时间
-    aeAddMillisecondsToNow(milliseconds,&te->when_sec,&te->when_ms);
-    // 设置事件处理器
-    te->timeProc = proc;
-    te->finalizerProc = finalizerProc;
-    // 设置私有数据
-    te->clientData = clientData;
-
-    // 将新事件放入表头
-    te->next = eventLoop->timeEventHead;
+    te->id = id;                                                        // 设置 ID
+    aeAddMillisecondsToNow(milliseconds,&te->when_sec,&te->when_ms);    // 设定处理事件的时间
+    te->timeProc = proc;                                                // 设置事件处理器
+    te->finalizerProc = finalizerProc;                                  // 清理操作
+    te->clientData = clientData;                                        // 设置私有数据
+    te->next = eventLoop->timeEventHead;                                // 将新事件放入表头
     eventLoop->timeEventHead = te;
 
     return id;
@@ -610,7 +529,7 @@ int aeWait(int fd, int mask, long long milliseconds) {
     if ((retval = poll(&pfd, 1, milliseconds))== 1) {
         if (pfd.revents & POLLIN) retmask |= AE_READABLE;
         if (pfd.revents & POLLOUT) retmask |= AE_WRITABLE;
-	if (pfd.revents & POLLERR) retmask |= AE_WRITABLE;
+	    if (pfd.revents & POLLERR) retmask |= AE_WRITABLE;
         if (pfd.revents & POLLHUP) retmask |= AE_WRITABLE;
         return retmask;
     } else {

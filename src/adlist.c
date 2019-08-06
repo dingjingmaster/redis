@@ -96,12 +96,6 @@ void listRelease(list *list)
     zfree(list);
 }
 
-/* Add a new node to the list, to head, contaning the specified 'value'
- * pointer as value.
- *
- * On error, NULL is returned and no operation is performed (i.e. the
- * list remains unaltered).
- * On success the 'list' pointer you pass to the function is returned. */
 /*
  * 将一个包含有给定值指针 value 的新节点添加到链表的表头
  *

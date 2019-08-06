@@ -88,44 +88,18 @@ typedef struct list {
 } list;
 
 /* Functions implemented as macros */
-// 返回给定链表所包含的节点数量
-// T = O(1)
-#define listLength(l) ((l)->len)
-// 返回给定链表的表头节点
-// T = O(1)
-#define listFirst(l) ((l)->head)
-// 返回给定链表的表尾节点
-// T = O(1)
-#define listLast(l) ((l)->tail)
-// 返回给定节点的前置节点
-// T = O(1)
-#define listPrevNode(n) ((n)->prev)
-// 返回给定节点的后置节点
-// T = O(1)
-#define listNextNode(n) ((n)->next)
-// 返回给定节点的值
-// T = O(1)
-#define listNodeValue(n) ((n)->value)
-
-// 将链表 l 的值复制函数设置为 m
-// T = O(1)
-#define listSetDupMethod(l,m) ((l)->dup = (m))
-// 将链表 l 的值释放函数设置为 m
-// T = O(1)
-#define listSetFreeMethod(l,m) ((l)->free = (m))
-// 将链表的对比函数设置为 m
-// T = O(1)
-#define listSetMatchMethod(l,m) ((l)->match = (m))
-
-// 返回给定链表的值复制函数
-// T = O(1)
-#define listGetDupMethod(l) ((l)->dup)
-// 返回给定链表的值释放函数
-// T = O(1)
-#define listGetFree(l) ((l)->free)
-// 返回给定链表的值对比函数
-// T = O(1)
-#define listGetMatchMethod(l) ((l)->match)
+#define listLength(l) ((l)->len)                                // 返回给定链表所包含的节点数量
+#define listFirst(l) ((l)->head)                                // 返回给定链表的表头节点
+#define listLast(l) ((l)->tail)                                 // 返回给定链表的表尾节点
+#define listPrevNode(n) ((n)->prev)                             // 返回给定节点的前置节点
+#define listNextNode(n) ((n)->next)                             // 返回给定节点的后置节点
+#define listNodeValue(n) ((n)->value)                           // 返回给定节点的值
+#define listSetDupMethod(l,m) ((l)->dup = (m))                  // 将链表 l 的值复制函数设置为 m        T = O(1)
+#define listSetFreeMethod(l,m) ((l)->free = (m))                // 将链表 l 的值释放函数设置为 m        T = O(1)
+#define listSetMatchMethod(l,m) ((l)->match = (m))              // 将链表的对比函数设置为 m             T = O(1)
+#define listGetDupMethod(l) ((l)->dup)                          // 返回给定链表的值复制函数
+#define listGetFree(l) ((l)->free)                              // 返回给定链表的值释放函数
+#define listGetMatchMethod(l) ((l)->match)                      // 返回给定链表的值对比函数
 
 /* Prototypes */
 list *listCreate(void);

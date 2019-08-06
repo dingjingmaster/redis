@@ -4,6 +4,11 @@
 
 - `service` 入口函数 `redis.c`
 
+#### 进度
+
+- 双端链表 `adlist.c adlist.h` ok
+- 事件 `ae.c ae.h`
+
 #### 代码整理
 
 | 文件                                                         | 作用                                                         |
