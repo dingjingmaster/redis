@@ -8,6 +8,8 @@
 
 - 双端链表 `adlist.c adlist.h` ok
 - 事件 `ae.c ae.h` ok
+- epoll `ae_epoll.c ae_select.c ae_kqueue.c ae_evport.c` ok
+- 异步网络 `anet.c anet.h`
 
 #### 代码整理
 

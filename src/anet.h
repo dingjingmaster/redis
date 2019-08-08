@@ -43,11 +43,58 @@
 #define AF_LOCAL AF_UNIX
 #endif
 
+/**
+ * 连接创建函数（阻塞）
+ *
+ * @param err：输出变量，错误信息
+ * @param addr：地址
+ * @param port：端口
+ * @return 成功：返回 fd
+ *         失败：ANET_ERR
+ */
 int anetTcpConnect(char *err, char *addr, int port);
+
+/**
+ * 连接创建函数（非阻塞）
+ *
+ * @param err：输出变量，错误信息
+ * @param addr：地址
+ * @param port：端口
+ * @return 成功：返回 fd
+ *         失败：ANET_ERR
+ */
 int anetTcpNonBlockConnect(char *err, char *addr, int port);
+
+/**
+ * 连接创建函数（非阻塞）
+ *
+ * @param err：输出变量，错误信息
+ * @param addr：地址
+ * @param port：端口
+ * @return 成功：返回 fd
+ *         失败：ANET_ERR
+ */
 int anetTcpNonBlockBindConnect(char *err, char *addr, int port, char *source_addr);
+
+/**
+ * 创建阻塞本地连接
+ */
 int anetUnixConnect(char *err, char *path);
+
+/**
+ * 创建非阻塞本地连接
+ */
 int anetUnixNonBlockConnect(char *err, char *path);
+
+/**
+ * 读取函数，最多读取前 count 个字节
+ *
+ * @param fd：要读取的文件描述符
+ * @param buf：读取暂存缓存
+ * @param count：读取的最大字节
+ * @return 成功：返回读取的字节
+ *         失败：-1
+ */
 int anetRead(int fd, char *buf, int count);
 int anetResolve(char *err, char *host, char *ipbuf, size_t ipbuf_len);
 int anetResolveIP(char *err, char *host, char *ipbuf, size_t ipbuf_len);

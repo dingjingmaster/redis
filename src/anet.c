@@ -194,9 +194,7 @@ int anetTcpKeepAlive(char *err, int fd)
  * that are actually already IPv4 or IPv6 addresses. This turns the function
  * into a validating / normalizing function. */
 // 解释 host 的地址，并保存到 ipbuf 中
-int anetGenericResolve(char *err, char *host, char *ipbuf, size_t ipbuf_len,
-                       int flags)
-{
+int anetGenericResolve(char *err, char *host, char *ipbuf, size_t ipbuf_len, int flags) {
     struct addrinfo hints, *info;
     int rv;
 
@@ -263,9 +261,7 @@ static int anetCreateSocket(char *err, int domain) {
 // 通用连接创建函数，被其他高层函数所调用
 #define ANET_CONNECT_NONE 0
 #define ANET_CONNECT_NONBLOCK 1
-static int anetTcpGenericConnect(char *err, char *addr, int port,
-                                 char *source_addr, int flags)
-{
+static int anetTcpGenericConnect(char *err, char *addr, int port, char *source_addr, int flags) {
     int s = ANET_ERR, rv;
     char portstr[6];  /* strlen("65535") + 1; */
     struct addrinfo hints, *servinfo, *bservinfo, *p, *b;
